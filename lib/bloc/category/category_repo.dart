@@ -4,11 +4,17 @@ import 'dart:convert';
 import 'package:esp_tiles/common/app_constant.dart';
 import 'package:esp_tiles/model/request/category_req.dart';
 import 'package:esp_tiles/model/response/category_resp.dart';
-import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
 abstract class CategoryRepo {
   var client = http.Client();
+
+  CategoryReq _categoryReq;
+
+  set categoryReq(CategoryReq req) {
+    assert(req != null);
+    _categoryReq = req;
+  }
 
   Stream<CategoryResp> categories();
 
@@ -18,20 +24,14 @@ abstract class CategoryRepo {
 }
 
 class CategoryRepository extends CategoryRepo {
-  final categoryStream = StreamController<CategoryResp>();
+  final categoryStream = StreamController<CategoryResp>.broadcast();
 
   String allCategoryListUrl;
-  CategoryReq categoryReq;
 
-  CategoryRepository(BuildContext context) {
-    allCategoryListUrl = '${AppConstants.of(context).baseUrl}Product/DashBoard';
-    categoryReq = CategoryReq(
-      categoryId: 0,
-      deviceManufacturer: '${AppConstants.of(context).deviceManufacturer}',
-      deviceModel: '${AppConstants.of(context).deviceModel}',
-      deviceToken: '',
-      pageIndex: 1,
-    );
+  CategoryRepository(CategoryReq categoryReq) {
+    allCategoryListUrl = '${AppConstants.baseUrl}Product/DashBoard';
+    print(allCategoryListUrl);
+    this._categoryReq = categoryReq;
   }
 
   @override
@@ -44,10 +44,13 @@ class CategoryRepository extends CategoryRepo {
 
   @override
   void getCategories() async {
-    String categoryReqJson = json.encode(categoryReq);
-    http.Response res =
-        await client?.post(allCategoryListUrl, body: categoryReqJson);
-    if (res.statusCode == 200) {
+    String categoryReqJson = json.encode(_categoryReq);
+    http.Response res = await client?.post(
+      allCategoryListUrl,
+      body: categoryReqJson,
+      headers: {"Content-Type": "application/json"},
+    );
+    if (res.statusCode >= 200 && res.statusCode <= 299) {
       CategoryResp categoryResult =
           CategoryResp.fromJson(json.decode(res.body));
       categoryStream.add(categoryResult);

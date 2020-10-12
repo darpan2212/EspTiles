@@ -17,9 +17,10 @@ class CategoryBloc extends Bloc<CategoryEvent, CategoryState> {
     if (event is CategoryFetch) {
       try {
         if (event.categoryList == null || event.categoryList.isEmpty) {
-          yield CategoryListFailure('');
+          yield CategoryListFailure('There are no data to show');
           return;
         } else {
+          print(event.categoryList);
           yield CategoryListSuccess(event.categoryList);
           return;
         }
@@ -28,5 +29,11 @@ class CategoryBloc extends Bloc<CategoryEvent, CategoryState> {
         return;
       }
     }
+  }
+
+  @override
+  Future<void> close() {
+    _categoryRepo.dispose();
+    return super.close();
   }
 }

@@ -5,17 +5,21 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
   Bloc.observer = SimpleBlocObserver();
-  runApp(ImperoApp());
+  runApp(
+    ImperoApp(),
+  );
 }
 
 class ImperoApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: AppConstants.of(context).title,
+      title: AppConstants.title,
       theme: ThemeData(
-        primarySwatch: Colors.black,
+        primaryColor: Colors.black,
+        visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
       home: HomePage(),
     );

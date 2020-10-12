@@ -5,9 +5,9 @@ abstract class CategoryState {}
 class CategoryListInit extends CategoryState {}
 
 class CategoryListSuccess extends CategoryState {
-  List<Category> userList;
-
-  CategoryListSuccess(this.userList);
+  List<Category> categoryList;
+  bool hasMaxData;
+  CategoryListSuccess(this.categoryList, {this.hasMaxData = false});
 }
 
 class CategoryListFailure extends CategoryState {
