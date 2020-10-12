@@ -12,22 +12,25 @@ class SubCategoryBloc extends Bloc<CategoryEvent, CategoryState> {
   Stream<CategoryState> mapEventToState(CategoryEvent event) async* {
     if (event is CategoryFetch) {
       try {
-        if (event.categoryList == null || event.categoryList.isEmpty) {
-          yield CategoryListFailure('There are no data to show');
+        if (event.categoryResp.status == 0) {
+          yield CategoryListFailure('${event.categoryResp.message}');
           return;
         } else {
           if (state is CategoryListSuccess &&
-              event.categoryList[0].subCategories == null) {
-            event.categoryList[0].subCategories = previousSubCategory;
-            yield CategoryListSuccess(event.categoryList, hasMaxData: true);
+              event.categoryResp.result.category[0].subCategories == null) {
+            event.categoryResp.result.category[0].subCategories =
+                previousSubCategory;
+            yield CategoryListSuccess(event.categoryResp, hasMaxData: true);
             return;
           }
           if (previousSubCategory != null && previousSubCategory.isNotEmpty) {
-            event.categoryList[0].subCategories =
-                previousSubCategory + event.categoryList[0].subCategories;
+            event.categoryResp.result.category[0].subCategories =
+                previousSubCategory +
+                    event.categoryResp.result.category[0].subCategories;
           }
-          previousSubCategory = event.categoryList[0].subCategories;
-          yield CategoryListSuccess(event.categoryList);
+          previousSubCategory =
+              event.categoryResp.result.category[0].subCategories;
+          yield CategoryListSuccess(event.categoryResp);
           return;
         }
       } catch (e) {
@@ -35,10 +38,5 @@ class SubCategoryBloc extends Bloc<CategoryEvent, CategoryState> {
         return;
       }
     }
-  }
-
-  @override
-  Future<void> close() {
-    return super.close();
   }
 }

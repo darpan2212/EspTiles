@@ -3,7 +3,7 @@ import 'package:esp_tiles/model/response/category_resp.dart';
 abstract class CategoryEvent {}
 
 class CategoryFetch extends CategoryEvent {
-  final List<Category> categoryList;
+  final CategoryResp categoryResp;
 
-  CategoryFetch(this.categoryList);
+  CategoryFetch(this.categoryResp);
 }

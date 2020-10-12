@@ -8,7 +8,7 @@ class CategoryBloc extends Bloc<CategoryEvent, CategoryState> {
 
   CategoryBloc(this._categoryRepo) : super(CategoryListInit()) {
     _categoryRepo.categories().listen((categoryResp) {
-      add(CategoryFetch(categoryResp.result.category));
+      add(CategoryFetch(categoryResp));
     });
   }
 
@@ -16,12 +16,12 @@ class CategoryBloc extends Bloc<CategoryEvent, CategoryState> {
   Stream<CategoryState> mapEventToState(CategoryEvent event) async* {
     if (event is CategoryFetch) {
       try {
-        if (event.categoryList == null || event.categoryList.isEmpty) {
-          yield CategoryListFailure('There are no data to show');
+        if (event.categoryResp.status == 0) {
+          yield CategoryListFailure('${event.categoryResp.message}');
           return;
         } else {
-          print(event.categoryList);
-          yield CategoryListSuccess(event.categoryList);
+          print(event.categoryResp.result.category);
+          yield CategoryListSuccess(event.categoryResp);
           return;
         }
       } catch (e) {

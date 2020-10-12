@@ -1,11 +1,10 @@
-import 'dart:async';
-
 import 'package:esp_tiles/bloc/category/category_event.dart';
 import 'package:esp_tiles/bloc/category/category_repo.dart';
 import 'package:esp_tiles/bloc/category/category_state.dart';
 import 'package:esp_tiles/bloc/sub_category/sub_category_bloc.dart';
 import 'package:esp_tiles/model/request/category_req.dart';
 import 'package:esp_tiles/model/response/category_resp.dart';
+import 'package:esp_tiles/module/product_list/product_list_details.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -25,8 +24,6 @@ class _SubCategoryDetailsScreenState extends State<SubCategoryDetailsScreen> {
   SubCategoryBloc subCategoryBloc;
 
   ScrollController _listController = ScrollController();
-
-  Timer timer;
 
   bool isSubCategoryLoading;
 
@@ -50,7 +47,7 @@ class _SubCategoryDetailsScreenState extends State<SubCategoryDetailsScreen> {
     )..getCategories();
     subCategoryBloc = SubCategoryBloc();
     subCategoryRepo.categories().listen((categoryResp) {
-      subCategoryBloc.add(CategoryFetch(categoryResp.result.category));
+      subCategoryBloc.add(CategoryFetch(categoryResp));
       isSubCategoryLoading = true;
     });
     super.initState();
@@ -89,7 +86,7 @@ class _SubCategoryDetailsScreenState extends State<SubCategoryDetailsScreen> {
             }
             if (state is CategoryListSuccess) {
               List<SubCategories> subCategories =
-                  state.categoryList[0].subCategories;
+                  state.categoryResp.result.category[0].subCategories;
               currentPageIndex = state.hasMaxData ? -1 : currentPageIndex;
               return NotificationListener<ScrollNotification>(
                 onNotification: (scrollNotification) {
@@ -156,14 +153,7 @@ class _SubCategoryDetailsScreenState extends State<SubCategoryDetailsScreen> {
         SizedBox(
           height: 12,
         ),
-        Container(
-          width: 100,
-          height: 100,
-          decoration: BoxDecoration(
-            color: Colors.red,
-            borderRadius: BorderRadius.circular(4),
-          ),
-        ),
+        ProductListDetailsScreen(subCat),
         SizedBox(
           height: 12,
         ),

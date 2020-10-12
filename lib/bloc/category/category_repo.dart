@@ -31,7 +31,7 @@ class CategoryRepository extends CategoryRepo {
   CategoryRepository(CategoryReq categoryReq) {
     allCategoryListUrl = '${AppConstants.baseUrl}Product/DashBoard';
     print(allCategoryListUrl);
-    this._categoryReq = categoryReq;
+    this.categoryReq = categoryReq;
   }
 
   @override

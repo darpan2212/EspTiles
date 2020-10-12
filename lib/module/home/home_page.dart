@@ -57,7 +57,7 @@ class _HomePageState extends State<HomePage>
               );
             }
             if (state is CategoryListSuccess) {
-              List<Category> categoryList = state.categoryList;
+              List<Category> categoryList = state.categoryResp.result.category;
               categoryTabController = TabController(
                 length: categoryList.length,
                 vsync: this,
